@@ -1,22 +1,25 @@
 import { useEffect, useState } from "react"
-import { Navigate } from "react-router-dom"
+import { Navigate, useNavigate } from "react-router-dom"
 
 
 
 export const Main = () => {
 
     const [celebs, setCeleb] = useState([])
-    const [filteredCeleb, setFilteredCeleb] = useState([])
-    const [isAliveGuess, setIsAliveGuess] = useState(null)
-    const [guessCeleb, setGuessCeleb] = useState({})
+    const [filteredCeleb, setFilteredCeleb] = useState({})
+    const [isCelebAlive, setIsCelebAlive] = useState(null)
+
+    const navigate = useNavigate()
 
     const currentUser = localStorage.getItem("current_user")
     const currentUserObject = JSON.parse(currentUser)
 
 
+
+
     const randomIdGenerator = () => {
 
-        const idArray = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]
+        const idArray = Array.from(Array(30).keys())
     
         const randomNumId = Math.floor(Math.random() * idArray.length)
     
@@ -26,52 +29,61 @@ export const Main = () => {
     
     let randomNumber = randomIdGenerator()
 
+
     useEffect( 
         () => {
         
             fetch("http://localhost:8088/celebrities")
             .then(res => res.json())
             .then((person) => { 
-
                 setCeleb(person)
-                
             })},
             []
     )
 
     useEffect(
         () => {
-            const people = celebs.filter(celeb => celeb.id === randomNumber) 
+            if(celebs.length > 0){
+
+            const people = celebs.find(celeb => celeb.id === randomNumber) 
             setFilteredCeleb(people)
+            if(people){
+                localStorage.setItem("current_celebrity", JSON.stringify(people));
+            }
+            }
         },
         [celebs]
-
-
     )
 
     
+
     useEffect(
         () => {
-            for(const guessedCeleb of filteredCeleb){
-                setGuessCeleb(guessedCeleb)
-                
-                
-            }
-        }
-        )
-        
+
+                if(filteredCeleb.dateOfDeath != 0){
+                    setIsCelebAlive(false)
+                }
+                else{
+                    setIsCelebAlive(true)
+                }
+        },
+        [filteredCeleb]
+    )
+   
         
         const saveClick = (event) => {
     
             
-    
                     const saveToSendToAPI = {
             
                         userId: currentUserObject.id,
-                        celebrityId: guessCeleb.id,
-                        isAliveGuess: event
+                        celebrityId: filteredCeleb.id,
+                        isAliveGuess: event,
+                        isCelebAlive: isCelebAlive
                     }
             
+
+
                     return fetch(`http://localhost:8088/statistics`,{
                         method: "POST",
                         headers: {
@@ -81,30 +93,28 @@ export const Main = () => {
                     })
                     .then(res => res.json())
                     .then(() => {
-    
-                        Navigate(`/mainAfter`)
-                        
+                        navigate(`/mainAfter`)
                     })
-            }
+                }
+
+            
 
     return <>
-        <>{filteredCeleb.map((celeb) => {
+            {filteredCeleb &&
+            <>
+                <img src={filteredCeleb.imageLink} className="main__pic" width="300" height="auto" key={`image--${filteredCeleb.id}`} />
 
-            return <>
-            
-                <img src={celeb.imageLink} className="main__pic" width="300" height="auto" key={`image--${celeb.id}`} />
-                    <li className="celebrity__name" key={`name--${celeb.id}`}>{celeb.name}
-            </li>
-            
-            <button key={`true--${celeb.id}`} onClick={() => {saveClick(true)}}>Alive</button>
-            <button key={`false--${celeb.id}`} onClick={() => {saveClick(false)}}>Dead</button>
+                <li className="celebrity__name" key={`name--${filteredCeleb.id}`}>{filteredCeleb.name}
+                </li>
 
+                <li className="celebrity__alias" key={`alias--${filteredCeleb.id}`}>{filteredCeleb.alias}</li>
+            
+            <button key={`true--${filteredCeleb.id}`} onClick={() => {saveClick(true)}}>Alive</button>
+            <button key={`false--${filteredCeleb.id}`} onClick={() => {saveClick(false)}}>Dead</button>
+            </>
+            }
 
             
-                </>
-        
+        </>
             
-            
-        })}</>
-    </>
 }
