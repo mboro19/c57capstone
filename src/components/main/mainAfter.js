@@ -2,6 +2,8 @@ import { useEffect, useState } from "react"
 import { Navigate, useNavigate, useParams } from "react-router-dom"
 import { Comments } from "../comments/comments.js"
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ IMPORTS ^^ ~~~ USESTATES vv
+
 export const MainAfter = () => {
     const [stats, setStats] = useState([])
     const [celeb, setCeleb] = useState([])
@@ -9,15 +11,14 @@ export const MainAfter = () => {
     const [celebObj, setCelebObj] = useState([])
     const [areTheyRight, setAreTheyRight] = useState(false)
     const [rightStatement, setRightStatement] = useState("")
-    const [deadOrAlive, setDeadOrAlive] = useState("")
-
-
-  
-    const navigate = useNavigate()
+   
+    const navigate = useNavigate() //used for navigation
 
     const currentUser = JSON.parse(localStorage.getItem("current_user"))
     const currentCelebrity = JSON.parse(localStorage.getItem("current_celebrity"))
+    //sets current user and current celebrity
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~ USEEFFECTS vv
 
     useEffect( 
         () => {
@@ -29,7 +30,7 @@ export const MainAfter = () => {
                 setStats(stats)
                 
             })},
-            []
+            [] //pulls stats from section in the api, sets initial state
     )
 
     useEffect( 
@@ -42,7 +43,7 @@ export const MainAfter = () => {
                 setCeleb(person)
                 
             })},
-            []
+            [] //pulls celebrities from the api, and sets initial state
     )
 
     useEffect(
@@ -59,7 +60,7 @@ export const MainAfter = () => {
         })}
 
         },
-        [celeb]
+        [celeb] //checks to see if stats exist, if they do.. it takes the last stat from the db and sets a filtered stat variable
     )
     
     useEffect(() => {
@@ -76,7 +77,7 @@ export const MainAfter = () => {
             
         }}
     },
-    [filteredStat]
+    [filteredStat] //waits on celebs to build, then pulls each object and compares the celeb id to the filtered celeb id and sets it to a variable celebObj
     )
     
     useEffect(() => {
@@ -85,7 +86,7 @@ export const MainAfter = () => {
 
 
     },
-    [celebObj]
+    [celebObj] //checks the stat to see if the users isAlive guess is equal to if the celeb is alive
     )
     
     useEffect(() => {
@@ -93,16 +94,19 @@ export const MainAfter = () => {
         if(areTheyRight === true){setRightStatement("Correct!!!")}else{setRightStatement("Wrong! Better luck with the next.")}
 
     },
-    [areTheyRight]
+    [areTheyRight] //checks to see if the guess is correct or false. If they are correct, it shows that. If wrong, it displays that as well. 
     )
 
-    useEffect(() => {
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ FUNCTIONS vv
 
-        if(filteredStat.isCelebAlive === true && filteredStat.length > 0){setDeadOrAlive("Alive")} else {setDeadOrAlive("Dead")}
-    },
-    [rightStatement]
-    )
- 
+const deadOrAlive = () => { //function that sets if the person is dead or alive and states that on the page. 
+
+        
+
+        if(filteredStat.isCelebAlive === true){return "Alive"} else {return "Dead"} 
+}
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ RETURN STATEMENT FOR MAINAFTER COMPONENT vv
 
     return <>
 
@@ -111,18 +115,14 @@ export const MainAfter = () => {
             <li className="celebrity__name" key={`name--${celebObj.id}`}>{celebObj.name}
             </li>
 
-            <h1 className="dead__alive" key={`status--${celebObj.id}`}>{deadOrAlive}</h1>
+            <h1 className="dead__alive" key={`status--${celebObj.id}`}>{deadOrAlive()}</h1>
 
             <div className="celebrity__statement" key={`statement--${celebObj.id}`}>{rightStatement}</div>
             <button key={``} onClick={() => {navigate("/main")}}>Next</button>
-            <Comments userId={currentUser.id} celebrityId={currentCelebrity.id} />
-
-
-            
-                
-        
-            
+            <Comments userId={currentUser.id} celebrityId={currentCelebrity.id} /> 
             
         </> 
     
 }
+
+// routed the comments through the main after page rather than on the application views. 

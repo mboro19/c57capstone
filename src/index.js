@@ -5,10 +5,12 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import { ApplicationViews } from './components/views/ApplicationViews.js';
+import { NavBar } from './components/nav/nav_bar';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter>
+    <NavBar />
     <ApplicationViews />
   </BrowserRouter>
 );
