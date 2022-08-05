@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import "./main.css"
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~ IMPORTS ^^ ~~~ USESTATES vv
 
@@ -27,7 +28,7 @@ export const Main = () => {
 
   let randomNumber = randomIdGenerator();
 
-  //~~~~~~~~~~~~~~~~~~~~~~~ USEEFFETS vv
+  //~~~~~~~~~~~~~~~~~~~~~~~ USEEFFECTS vv
 
   useEffect(
     () => {
@@ -37,7 +38,7 @@ export const Main = () => {
           setCeleb(person);
         });
     },
-    [] //useeffect that pulls the celebrities from the api and sets initial state
+    [] //dependency array is empty, because it only runs once and sets initial state.
   );
 
   useEffect(
@@ -93,23 +94,24 @@ export const Main = () => {
     <>
       {filteredCeleb && (
         <>
+        <div className="div--pic">
           <img
             src={filteredCeleb.imageLink}
-            className="main__pic"
+            className="main--pic"
             width="300"
             height="auto"
             key={`image--${filteredCeleb.id}`}
-          />
-
-          <li className="celebrity__name" key={`name--${filteredCeleb.id}`}>
+          /></div>
+        <div className="name--position">
+          <div className="celebrity--name" key={`name--${filteredCeleb.id}`}>
             {filteredCeleb.name}
-          </li>
-
-          <li className="celebrity__alias" key={`alias--${filteredCeleb.id}`}>
+          </div>
+          <p className="celebrity--alias" key={`alias--${filteredCeleb.id}`}>
             {filteredCeleb.alias}
-          </li>
-
+          </p>
+        <div className="alive--buttons">
           <button
+            className="button--1"
             key={`true--${filteredCeleb.id}`}
             onClick={() => {
               saveClick(true);
@@ -118,6 +120,7 @@ export const Main = () => {
             Alive
           </button>
           <button
+            className="button--2"
             key={`false--${filteredCeleb.id}`}
             onClick={() => {
               saveClick(false);
@@ -125,6 +128,8 @@ export const Main = () => {
           >
             Dead
           </button>
+          </div>
+        </div>
         </>
       )}
     </>

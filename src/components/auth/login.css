@@ -43,6 +43,8 @@ fieldset {
 
 .container--login {
     text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+    
 }
 
 .form--login {
@@ -60,3 +62,17 @@ fieldset {
     bottom: -2rem;
 }
 
+body{
+
+    background-image: url(https://res.cloudinary.com/mboro19/image/upload/v1659627176/skull-cross_qnq0tw.jpg);
+    background-repeat: no-repeat;
+    background-position-x: right;
+    background-blend-mode: lighten;
+    
+}
+
+.main--name{
+
+font-family: ;
+
+}
